@@ -305,5 +305,6 @@ async def list_reports(authorization: str = Header(None)):
 # ---------- run (opcional) ----------
 if __name__ == "__main__":
     import uvicorn
-    print("Starting uvicorn on 0.0.0.0:5000")
-    uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=False)
+    port = int(os.getenv("PORT", 8000))  # Railway manda PORT, senão usa 8000
+    print(f"Starting uvicorn on 0.0.0.0:{port}")
+    uvicorn.run("app:app", host="0.0.0.0", port=port, reload=False)
