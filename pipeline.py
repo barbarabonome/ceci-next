@@ -1,11 +1,18 @@
 from __future__ import annotations
 
 from typing import Optional
+from functools import lru_cache
 
 from orchestrator import LLMOrchestrator
 
 
-_orchestrator = LLMOrchestrator()
+@lru_cache(maxsize=1)
+def get_orchestrator() -> LLMOrchestrator:
+    """
+    Cria o orquestrador só na primeira vez que for usado.
+    Isso evita crash no deploy quando a OPENAI_API_KEY ainda não foi lida.
+    """
+    return LLMOrchestrator()
 
 
 def _build_session_id(
@@ -29,6 +36,17 @@ async def process_user_input(
     *,
     session_id: Optional[str] = None,
 ):
+    """
+    Gera chunks da resposta do LLM, mantendo a mesma assinatura que você já usa.
+    """
+    orchestrator = get_orchestrator()
     session_key = _build_session_id(tipo_usuario, token, session_id)
-    async for chunk in _orchestrator.handle_message(session_key, user_input, tipo_usuario, token):
+
+    # mantém o streaming
+    async for chunk in orchestrator.handle_message(
+        session_key,
+        user_input,
+        tipo_usuario,
+        token,
+    ):
         yield chunk
