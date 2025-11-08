@@ -301,6 +301,12 @@ async def list_reports(authorization: str = Header(None)):
     
     return {"reports": reports}
 
+@app.websocket("/ws/ping")
+async def ws_ping(ws: WebSocket):
+    await ws.accept()
+    await ws.send_text("pong")
+    await ws.close()
+
 
 # ---------- run (opcional) ----------
 if __name__ == "__main__":
@@ -308,3 +314,4 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))  # Railway manda PORT, senão usa 8000
     print(f"Starting uvicorn on 0.0.0.0:{port}")
     uvicorn.run("app:app", host="0.0.0.0", port=port, reload=False)
+
