@@ -1,6 +1,3 @@
-# Requirements otimizado para Azure App Service
-# Usa versões pré-compiladas para evitar build pesado
-
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 python-dotenv==1.0.0

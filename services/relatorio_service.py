@@ -17,8 +17,10 @@ def get_colaborador_info_from_token(token: str) -> dict:
     Retorna dict com login, nome, etc.
     """
     try:
-        # Remove "Bearer " se presente
-        clean_token = token.replace("Bearer ", "") if token.startswith("Bearer ") else token
+        token_limp = token.strip().strip('"')
+        if token_limp.lower().startswith("bearer "):
+            token_limp = token_limp.split(" ", 1)[1]
+        clean_token = token_limp
         payload = jwt.decode(clean_token, SECRET, algorithms=["HS256"])
         return {
             "login": payload.get("sub"),

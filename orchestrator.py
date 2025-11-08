@@ -189,8 +189,8 @@ class LLMOrchestrator:
 
         if not self._is_transport_topic(user_text):
             aviso = (
-                "Desculpe, só posso ajudar com assuntos do transporte público de São Paulo."
-                " Conte algo sobre linhas, estações, tarifas ou serviços da rede."
+                "Posso te ajudar com o transporte público de São Paulo."
+                " Me conta qual linha, estação ou serviço do metrô, CPTM ou ônibus você quer saber?"
             )
             yield aviso
             return
@@ -345,6 +345,8 @@ class LLMOrchestrator:
                     f"Contexto da sessão: usuário é {perfil}. Token disponível: {'sim' if has_token else 'não'}."
                     " Quando usar search_knowledge, cite as informações de forma natural e referencial."
                     " Se o conteúdo do RAG não for suficiente, explique com transparência."
+                    " Se a pergunta parecer fora do transporte público de São Paulo, peça gentilmente que o usuário confirme"
+                    " mencionando estação, linha ou serviço antes de recusar."
                 ),
             },
         ]
@@ -352,37 +354,71 @@ class LLMOrchestrator:
     def _is_transport_topic(self, texto: str) -> bool:
         texto_norm = texto.lower()
         texto_unaccented = unidecode(texto_norm)
-        palavras_chave = (
-            "são paulo",
-            "sp",
-            "metrô",
+
+        if not texto_unaccented.strip():
+            return False
+
+        token_keywords = {
             "metro",
             "cptm",
+            "monotrilho",
             "linha",
-            "estação",
+            "linhas",
             "estacao",
+            "estacoes",
             "bilhete",
-            "billete",
+            "bilhetes",
+            "tarifa",
+            "tarifas",
             "passagem",
+            "passagens",
             "trem",
-            "transporte",
+            "trens",
+            "tremmetropolitano",
+            "viaquatro",
+            "viamobilidade",
+            "onibus",
             "terminal",
-            "viagem",
-            "trilho",
-            "ceci",
+            "terminais",
+            "corredor",
+            "corredores",
+            "transporte",
+            "baldeacao",
+            "transferencia",
+            "horario",
+            "horarios",
+            "lotacao",
+            "lotacoes",
+            "estudante",
+            "estudantes",
+            "paulista",
+            "billete",
+            "subway",
+            "tube",
+        }
+
+        frase_keywords = (
+            "bilhete unico",
+            "sao paulo",
         )
 
-        if any(chave in texto_norm for chave in palavras_chave):
+        tokens_texto = set(re.findall(r"\w+", texto_unaccented))
+
+        if token_keywords & tokens_texto:
             return True
 
+        if any(frase in texto_unaccented for frase in frase_keywords):
+            return True
+
+        # reforça com os nomes das estações para evitar falsos positivos
         try:
             estacoes = rota_service.list_all_stations()
         except Exception:
             estacoes = []
 
         for estacao in estacoes:
-            estacao_norm = estacao.lower()
-            if estacao_norm in texto_norm or unidecode(estacao_norm) in texto_unaccented:
+            estacao_norm = unidecode(estacao.lower())
+            if estacao_norm in texto_unaccented or estacao_norm in tokens_texto:
                 return True
 
         return False

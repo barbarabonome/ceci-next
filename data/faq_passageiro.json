@@ -100,7 +100,7 @@
       "role": "passageiro",
       "question": "Qual o preço da tarifa?",
       "context": "O usuário quer saber o custo da passagem.",
-      "answer": "A tarifa do Metrô de São Paulo é de R$4,40. Você pode pagar com Bilhete Único, cartão por aproximação ou em dinheiro."
+  "answer": "A tarifa do Metrô de São Paulo é de R$5,20. Você pode pagar com Bilhete Único ou em dinheiro."
     },
     {
       "role": "passageiro",

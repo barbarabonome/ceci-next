@@ -66,7 +66,8 @@ def get_login_from_token(token: str) -> Optional[str]:
     Retorna o login do usuário (sub) a partir do token JWT.
     """
     try:
-        payload = jwt.decode(token.replace("Bearer ", ""), SECRET, algorithms=["HS256"])
+        token_limp = token.strip().strip('"').replace("Bearer ", "")
+        payload = jwt.decode(token_limp, SECRET, algorithms=["HS256"])
         return payload.get("login")  # login do usuário (era "sub", mas usamos "login")
     except InvalidTokenError:
         return None
