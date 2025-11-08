@@ -1,40 +1,60 @@
-__pycache__
+# ───── Python cache e temporários ─────
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
+*.log
+
+# ───── Ambientes virtuais ─────
 env/
 venv/
-.venv
-pip-log.txt
-pip-delete-this-directory.txt
+.venv/
+ENV/
+VENV/
+
+# ───── Ferramentas e testes ─────
 .tox/
+.nox/
 .coverage
 .coverage.*
-.cache
+.cache/
 nosetests.xml
 coverage.xml
 *.cover
 *.log
-.git
-.gitignore
-.mypy_cache
-.pytest_cache
-.hypothesis
-*.swp
-*.swo
-*~
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
+
+# ───── IDEs e sistemas ─────
 .DS_Store
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# ───── Git ─────
+.git/
+.gitignore
+
+# ───── Documentação e artefatos ─────
 *.md
 !README.md
-.env
-.env.*
 *.tar
 *.zip
+
+# ───── Arquivos específicos de build ─────
 Dockerfile.dev
 docker-compose*.yml
 requirements-original.txt
 requirements-azure.txt
 DEPLOY*.md
+
+# ───── Importante ─────
+# ⚠️ NÃO ignore o .env para poder usá-lo localmente
+# (O Railway injeta as envs automaticamente, então não há risco de expor)
+# Caso queira esconder o .env, basta descomentar abaixo:
+# .env
+# .env.*
